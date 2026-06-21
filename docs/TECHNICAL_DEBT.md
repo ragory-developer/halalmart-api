@@ -1,4 +1,4 @@
-# FreshCart API — Technical Debt Register
+# HalalMart API — Technical Debt Register
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**  
 > **Format:** Each item tracks the problem, its business impact, and the remediation path.

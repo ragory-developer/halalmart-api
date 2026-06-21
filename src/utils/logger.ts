@@ -79,7 +79,7 @@ const winstonLogger = winston.createLogger({
   level: level(),
   levels,
   defaultMeta: {
-    service: 'freshmart-api',
+    service: 'halalmart-api',
     environment: process.env.NODE_ENV || 'development',
   },
   transports,

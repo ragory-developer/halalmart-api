@@ -60,19 +60,19 @@ async function main() {
   // Super Admin
   const superAdmin = await prisma.user.create({
     data: {
-      email: 'admin@freshmart.com',
+      email: 'admin@halalmart.com',
       password: hashedPassword,
       name: 'System Administrator',
       phone: '01700000000',
       role: 'SUPER_ADMIN',
     },
   });
-  console.log('✅ Super Admin created: admin@freshmart.com / password123');
+  console.log('✅ Super Admin created: admin@halalmart.com / password123');
 
   // Customer
   const customer = await prisma.user.create({
     data: {
-      email: 'customer@freshmart.com',
+      email: 'customer@halalmart.com',
       password: hashedPassword,
       name: 'Jane Doe',
       phone: '01800000000',
@@ -85,7 +85,7 @@ async function main() {
       userId: customer.id,
     },
   });
-  console.log('✅ Customer created: customer@freshmart.com / password123');
+  console.log('✅ Customer created: customer@halalmart.com / password123');
 
   // --- Bangladesh Divisions (States) ---
   console.log('🗺️ Seeding locations...');
@@ -469,13 +469,13 @@ async function main() {
   // --- Seed Global Store Settings ---
   console.log('⚙️ Seeding store settings...');
   const settingsData = [
-    { key: 'store_name', value: 'FreshMart' },
+    { key: 'store_name', value: 'HalalMart' },
     { key: 'store_logo', value: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=150&q=80' },
-    { key: 'footer_about_text', value: 'FreshMart is your premium destination for organic beauty, skincare essentials, and natural wellness products delivered to your door in Dhaka.' },
+    { key: 'footer_about_text', value: 'HalalMart is your premium destination for organic beauty, skincare essentials, and natural wellness products delivered to your door in Dhaka.' },
     { key: 'footer_address', value: 'House 42, Road 11, Banani, Dhaka 1213' },
     { key: 'footer_phone', value: '+880 1800-000000' },
-    { key: 'footer_email', value: 'support@freshmart.test' },
-    { key: 'footer_copyright', value: 'FreshMart. All rights reserved.' },
+    { key: 'footer_email', value: 'support@halalmart.test' },
+    { key: 'footer_copyright', value: 'HalalMart. All rights reserved.' },
     { key: 'currency', value: '৳' },
     // Global Styling Configuration
     { key: 'permalink_structure', value: 'flat' },
@@ -709,7 +709,7 @@ async function main() {
             name: "Aisha Begum",
             avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
             rating: 5,
-            review: "FreshMart's Vitamin C serum is the first product that actually worked for my dark circles. Amazing!",
+            review: "HalalMart's Vitamin C serum is the first product that actually worked for my dark circles. Amazing!",
             product: "Vitamin C Glow Serum"
           },
           {
@@ -777,7 +777,7 @@ async function main() {
       props: {
         title: "Clean Beauty Standard",
         subtitle: "Every item is checked against a database of 120 banned chemical ingredients to ensure safety for sensitive skin profiles.",
-        badgeText: "FreshMart Quality Seal",
+        badgeText: "HalalMart Quality Seal",
         ctaText: "Learn More",
         ctaHref: "/products",
         imageSrc: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",

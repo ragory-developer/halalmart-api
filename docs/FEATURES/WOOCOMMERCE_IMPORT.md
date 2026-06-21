@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Allows admins to migrate an entire WooCommerce product catalog into FreshCart. Products are fetched via the WooCommerce REST API and mapped to FreshCart's data model.
+Allows admins to migrate an entire WooCommerce product catalog into HalalMart. Products are fetched via the WooCommerce REST API and mapped to HalalMart's data model.
 
 ---
 
@@ -34,7 +34,7 @@ Stored in `WordPressSetting` table.
 `importQueue.ts` manages an **in-process task queue** with `MAX_CONCURRENT_TASKS = 1`.
 
 For each task:
-1. Fetch WooCommerce categories → build `catMap` (WC category ID → FreshCart category ID)
+1. Fetch WooCommerce categories → build `catMap` (WC category ID → HalalMart category ID)
 2. Fetch product page from WooCommerce
 3. For each product: call `importProduct()`
 4. Log progress to `ImportTask.details` (JSON array of timestamped messages, max 500 lines)
@@ -44,7 +44,7 @@ For each task:
 
 `importService.importProduct()` maps WooCommerce fields:
 
-| WooCommerce | FreshCart |
+| WooCommerce | HalalMart |
 |-------------|-----------|
 | `id` | `externalId` (for deduplication) |
 | `name` | `name` |

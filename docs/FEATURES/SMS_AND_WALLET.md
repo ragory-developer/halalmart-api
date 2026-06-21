@@ -7,7 +7,7 @@
 ## SMS Gateway
 
 ### Overview
-FreshCart uses an external SMS gateway (MassData) to send OTP codes and order status notifications.
+HalalMart uses an external SMS gateway (MassData) to send OTP codes and order status notifications.
 
 ### Global SMS Function
 
@@ -29,7 +29,7 @@ When `NODE_ENV=development`, SMS is mocked:
 ```
 === MOCK SMS API (DEVELOPMENT MODE) ===
 TO: 01XXXXXXXXX
-TEXT: Your FreshCart verification code is: 123456
+TEXT: Your HalalMart verification code is: 123456
 ====================
 ```
 
@@ -39,7 +39,7 @@ No actual gateway call is made. Always returns `true`.
 
 | Event | Message | Wallet Deducted? |
 |-------|---------|-----------------|
-| OTP send | `"Your FreshCart verification code is: XXXXXX"` | No |
+| OTP send | `"Your HalalMart verification code is: XXXXXX"` | No |
 | Order SHIPPED | `"Your order #XXXXXX has been shipped..."` | Yes |
 | Order DELIVERED | `"Your order #XXXXXX has been delivered..."` | Yes |
 | Order CANCELLED | `"Your order #XXXXXX has been cancelled..."` | Yes |

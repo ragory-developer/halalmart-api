@@ -1,4 +1,4 @@
-# FreshCart API — AI Changelog
+# HalalMart API — AI Changelog
 
 > **Format:** AI-tracked changes and documentation updates.  
 > **Maintained by:** AI documentation agent (Antigravity / Gemini)

@@ -7,9 +7,9 @@ const options: swaggerJSDoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'FreshMart API Documentation',
+      title: 'HalalMart API Documentation',
       version: '1.0.0',
-      description: 'API documentation for the FreshMart e-commerce backend.',
+      description: 'API documentation for the HalalMart e-commerce backend.',
     },
     servers: [
       // Primary server based on the active environment
@@ -48,7 +48,7 @@ export const setupSwagger = (app: Application) => {
   // Mount the Swagger UI on /api-docs route
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: "FreshMart API Docs"
+    customSiteTitle: "HalalMart API Docs"
   }));
   console.log(`Swagger docs are available at ${config.apiUrl}/api-docs`);
 };

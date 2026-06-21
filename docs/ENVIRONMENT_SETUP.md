@@ -1,4 +1,4 @@
-# FreshCart API — Environment Setup Guide
+# HalalMart API — Environment Setup Guide
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**
 
@@ -27,7 +27,7 @@ Optional:
 
 ```bash
 git clone <repository-url>
-cd freshmart-api
+cd halalmart-api
 npm install
 ```
 
@@ -45,7 +45,7 @@ PORT=5000
 NODE_ENV=development
 
 # Database (local MySQL)
-DATABASE_URL="mysql://root:password@localhost:3306/freshmart_db"
+DATABASE_URL="mysql://root:password@localhost:3306/halalmart_db"
 
 # JWT (any random strings in development)
 JWT_ACCESS_SECRET=dev-access-secret-change-in-prod
@@ -70,7 +70,7 @@ API_URL=http://localhost:5000
 
 Create the database:
 ```sql
-CREATE DATABASE freshmart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE halalmart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 Run migrations:
@@ -138,7 +138,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL=mysql://root:password@db:3306/freshmart
+      - DATABASE_URL=mysql://root:password@db:3306/halalmart
       - JWT_ACCESS_SECRET=change-this
       - JWT_REFRESH_SECRET=change-this
       - NODE_ENV=production
@@ -149,7 +149,7 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: freshmart
+      MYSQL_DATABASE: halalmart
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -188,7 +188,7 @@ npm install -g prisma
 ```bash
 # Clone and install
 git clone <repo>
-cd freshmart-api
+cd halalmart-api
 npm install --production
 
 # Configure environment
@@ -206,7 +206,7 @@ npx tsx scripts/seed-areas.ts
 npm run db:seed
 
 # Start with PM2
-pm2 start dist/server.js --name freshmart-api
+pm2 start dist/server.js --name halalmart-api
 pm2 save
 pm2 startup   # Enable auto-start on reboot
 ```
@@ -231,7 +231,7 @@ server {
 
     # Serve uploaded files directly
     location /uploads/ {
-        alias /var/www/freshmart-api/uploads/;
+        alias /var/www/halalmart-api/uploads/;
     }
 }
 ```
@@ -248,7 +248,7 @@ certbot --nginx -d api.yourdomain.com
 ```env
 NODE_ENV=production
 PORT=5000
-DATABASE_URL="mysql://dbuser:strongpassword@localhost:3306/freshmart_prod"
+DATABASE_URL="mysql://dbuser:strongpassword@localhost:3306/halalmart_prod"
 JWT_ACCESS_SECRET=<generate-with-openssl-rand-base64-64>
 JWT_REFRESH_SECRET=<generate-with-openssl-rand-base64-64>
 JWT_ACCESS_EXPIRES_IN=8h
@@ -280,9 +280,9 @@ sudo mysql -u root -p
 ```
 
 ```sql
-CREATE DATABASE freshmart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'freshmart'@'localhost' IDENTIFIED BY 'strongpassword';
-GRANT ALL PRIVILEGES ON freshmart_db.* TO 'freshmart'@'localhost';
+CREATE DATABASE halalmart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'halalmart'@'localhost' IDENTIFIED BY 'strongpassword';
+GRANT ALL PRIVILEGES ON halalmart_db.* TO 'halalmart'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -291,7 +291,7 @@ EXIT;
 
 ## AWS S3 Setup (for Media Storage)
 
-1. Create an S3 bucket (e.g., `freshmart-media`)
+1. Create an S3 bucket (e.g., `halalmart-media`)
 2. Set bucket policy to allow public read (for image serving)
 3. Create IAM user with `AmazonS3FullAccess` policy
 4. Generate access keys

@@ -1,4 +1,4 @@
-# FreshCart API — AI Onboarding Guide
+# HalalMart API — AI Onboarding Guide
 
 > **Last Updated:** 2026-06-11 | **For AI Agents & New Developers**
 
@@ -6,7 +6,7 @@
 
 ## What Is This Project?
 
-**FreshCart** is a production-ready **grocery e-commerce REST API** built with:
+**HalalMart** is a production-ready **grocery e-commerce REST API** built with:
 - **Language:** TypeScript
 - **Framework:** Express.js
 - **ORM:** Prisma (MySQL)
@@ -19,7 +19,7 @@ It is the **backend API** for a grocery/lifestyle e-commerce platform primarily 
 ## Repository Location
 
 ```
-/home/shaharia/E_COM_API/freshmart-api
+/home/shaharia/E_COM_API/halalmart-api
 ```
 
 ---

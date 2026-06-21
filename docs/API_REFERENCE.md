@@ -1,4 +1,4 @@
-# FreshCart API — Complete API Reference
+# HalalMart API — Complete API Reference
 
 > **Last Updated:** 2026-06-11 | **Base URL:** `http://localhost:5000/api` | **AI-Maintained**
 

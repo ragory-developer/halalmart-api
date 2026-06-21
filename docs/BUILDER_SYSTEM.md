@@ -1,4 +1,4 @@
-# FreshCart API — Builder System
+# HalalMart API — Builder System
 
 > **Last Updated:** 2026-06-11 | **Source:** `src/controllers/BuilderController.ts`, `src/validators/builder.schema.ts`, `src/routes/builderRoutes.ts` | **AI-Maintained**
 

@@ -1,4 +1,4 @@
-# FreshCart API — Performance Review
+# HalalMart API — Performance Review
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**  
 > **Scope:** Identified performance issues with measurable impact recommendations.

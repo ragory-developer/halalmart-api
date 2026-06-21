@@ -1,4 +1,4 @@
-# FreshCart API — Architecture Documentation
+# HalalMart API — Architecture Documentation
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**
 

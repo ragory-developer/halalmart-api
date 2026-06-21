@@ -1,4 +1,4 @@
-# FreshCart API — Data Flow Documentation
+# HalalMart API — Data Flow Documentation
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**
 
@@ -280,7 +280,7 @@ For each task execution:
   ├── Fetch page of products from WooCommerce
   │
   ├── For each product:
-  │   ├── Map WC fields to FreshCart Product fields
+  │   ├── Map WC fields to HalalMart Product fields
   │   ├── Handle externalId for deduplication (upsert)
   │   ├── Map categories (create if missing)
   │   ├── Import images (download + re-upload to storage)

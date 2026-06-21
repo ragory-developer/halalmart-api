@@ -611,11 +611,11 @@ export class OrderController extends BaseController {
       const shortId = currentOrder.id.slice(-6).toUpperCase();
       
       if (status === 'SHIPPED') {
-        message = `Your FreshCart order #${shortId} has been shipped and is on its way!`;
+        message = `Your HalalMart order #${shortId} has been shipped and is on its way!`;
       } else if (status === 'DELIVERED') {
-        message = `Your FreshCart order #${shortId} has been delivered. Thank you for shopping with us!`;
+        message = `Your HalalMart order #${shortId} has been delivered. Thank you for shopping with us!`;
       } else if (status === 'CANCELLED') {
-        message = `Your FreshCart order #${shortId} has been cancelled. Please contact support for any queries.`;
+        message = `Your HalalMart order #${shortId} has been cancelled. Please contact support for any queries.`;
       }
       
       if (message) {

@@ -1,4 +1,4 @@
-# FreshCart API — Deployment Playbook
+# HalalMart API — Deployment Playbook
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**
 
@@ -31,9 +31,9 @@ sudo mysql_secure_installation
 
 ```sql
 -- Connect as root
-CREATE DATABASE freshmart_prod CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'freshmart'@'localhost' IDENTIFIED BY '<strong-password>';
-GRANT ALL PRIVILEGES ON freshmart_prod.* TO 'freshmart'@'localhost';
+CREATE DATABASE halalmart_prod CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'halalmart'@'localhost' IDENTIFIED BY '<strong-password>';
+GRANT ALL PRIVILEGES ON halalmart_prod.* TO 'halalmart'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
@@ -42,8 +42,8 @@ FLUSH PRIVILEGES;
 ```bash
 # Clone the repository
 cd /var/www
-git clone <repository-url> freshmart-api
-cd freshmart-api
+git clone <repository-url> halalmart-api
+cd halalmart-api
 
 # Install production dependencies
 npm install
@@ -87,7 +87,7 @@ curl -X POST http://localhost:5000/api/auth/setup-super-admin \
 
 ```bash
 # Start with PM2
-pm2 start dist/server.js --name freshmart-api
+pm2 start dist/server.js --name halalmart-api
 
 # Save PM2 configuration
 pm2 save
@@ -101,13 +101,13 @@ pm2 startup
 
 ```bash
 sudo apt install nginx
-sudo nano /etc/nginx/sites-available/freshmart-api
+sudo nano /etc/nginx/sites-available/halalmart-api
 ```
 
 Paste the Nginx config (see `ENVIRONMENT_SETUP.md`) then:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/freshmart-api /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/halalmart-api /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
@@ -132,7 +132,7 @@ curl https://api.yourdomain.com/api/health
 
 ```bash
 # 1. Navigate to project
-cd /var/www/freshmart-api
+cd /var/www/halalmart-api
 
 # 2. Pull latest changes
 git pull origin main
@@ -150,7 +150,7 @@ npx prisma migrate deploy
 npx prisma generate
 
 # 7. Restart application
-pm2 restart freshmart-api
+pm2 restart halalmart-api
 
 # 8. Verify
 pm2 status
@@ -178,7 +178,7 @@ npm run build
 # DO NOT use prisma migrate dev in production
 
 # 5. Restart
-pm2 restart freshmart-api
+pm2 restart halalmart-api
 ```
 
 > [!CAUTION]
@@ -190,7 +190,7 @@ pm2 restart freshmart-api
 
 ```bash
 # 1. BACKUP FIRST (critical)
-mysqldump -u freshmart -p freshmart_prod > backup_$(date +%Y%m%d_%H%M%S).sql
+mysqldump -u halalmart -p halalmart_prod > backup_$(date +%Y%m%d_%H%M%S).sql
 
 # 2. Check what migrations will run
 npx prisma migrate status
@@ -199,7 +199,7 @@ npx prisma migrate status
 npx prisma migrate deploy
 
 # 4. Verify application still starts
-pm2 restart freshmart-api
+pm2 restart halalmart-api
 sleep 5
 curl https://api.yourdomain.com/api/health
 ```
@@ -211,7 +211,7 @@ curl https://api.yourdomain.com/api/health
 The application does not use a dedicated cache layer (Redis/Memcached). To clear any Node.js module cache, restart the process:
 
 ```bash
-pm2 restart freshmart-api
+pm2 restart halalmart-api
 ```
 
 ---
@@ -220,8 +220,8 @@ pm2 restart freshmart-api
 
 ```bash
 # Application
-pm2 restart freshmart-api
-pm2 reload freshmart-api    # Zero-downtime reload
+pm2 restart halalmart-api
+pm2 reload halalmart-api    # Zero-downtime reload
 
 # Nginx
 sudo systemctl restart nginx
@@ -238,7 +238,7 @@ sudo systemctl restart mysql
 ```bash
 # Application status
 pm2 status
-pm2 logs freshmart-api --lines 100
+pm2 logs halalmart-api --lines 100
 
 # System resources
 pm2 monit
@@ -259,25 +259,25 @@ sudo systemctl status mysql
 pm2 list
 
 # View logs
-pm2 logs freshmart-api
+pm2 logs halalmart-api
 
 # View last 200 lines
-pm2 logs freshmart-api --lines 200
+pm2 logs halalmart-api --lines 200
 
 # Clear logs
-pm2 flush freshmart-api
+pm2 flush halalmart-api
 
 # Show process details
-pm2 show freshmart-api
+pm2 show halalmart-api
 
 # Restart with zero downtime (reload)
-pm2 reload freshmart-api
+pm2 reload halalmart-api
 
 # Stop application
-pm2 stop freshmart-api
+pm2 stop halalmart-api
 
 # Delete from PM2
-pm2 delete freshmart-api
+pm2 delete halalmart-api
 ```
 
 ---

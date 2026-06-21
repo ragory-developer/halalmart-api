@@ -1,4 +1,4 @@
-# FreshCart API — Project Overview
+# HalalMart API — Project Overview
 
 > **Last Updated:** 2026-06-11 | **Version:** 1.0.0 | **AI-Maintained**
 
@@ -6,15 +6,15 @@
 
 ## What Is This Project?
 
-**FreshCart** is a full-featured grocery & e-commerce backend API built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM** on a **MySQL** database. It powers an online storefront where customers can browse products, manage carts, place orders, and track deliveries — and where admins can manage the entire catalog, inventory, orders, and even the visual layout of the storefront.
+**HalalMart** is a full-featured grocery & e-commerce backend API built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM** on a **MySQL** database. It powers an online storefront where customers can browse products, manage carts, place orders, and track deliveries — and where admins can manage the entire catalog, inventory, orders, and even the visual layout of the storefront.
 
-The project name in `package.json` is `freshcart-backend`.
+The project name in `package.json` is `halalmart-backend`.
 
 ---
 
 ## Business Problem Solved
 
-FreshCart enables small-to-medium grocery and lifestyle e-commerce businesses in Bangladesh to:
+HalalMart enables small-to-medium grocery and lifestyle e-commerce businesses in Bangladesh to:
 
 1. **Sell online** — product catalog, categories, brands, promotions, and variant-based pricing.
 2. **Accept orders** — COD, card, bKash, Nagad payment methods.
@@ -22,7 +22,7 @@ FreshCart enables small-to-medium grocery and lifestyle e-commerce businesses in
 4. **Retain customers** — OTP-based phone authentication, reward points, wallet credits, wishlists.
 5. **Run marketing campaigns** — Facebook Conversions API integration, coupons, bulk promotions.
 6. **Control storefront layout** — a builder system that lets admins visually compose page layouts by section without writing code.
-7. **Import products from WooCommerce** — migrate an existing WooCommerce store's catalog into FreshCart automatically.
+7. **Import products from WooCommerce** — migrate an existing WooCommerce store's catalog into HalalMart automatically.
 
 ---
 
@@ -122,7 +122,7 @@ src/
 ## Repository Structure
 
 ```
-freshmart-api/
+halalmart-api/
 ├── docs/                    ← All documentation (this folder)
 ├── prisma/
 │   ├── schema.prisma        ← Prisma data model (single source of truth for DB)

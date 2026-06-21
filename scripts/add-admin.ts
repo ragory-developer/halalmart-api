@@ -7,13 +7,13 @@ async function main() {
   const adminPassword = await bcrypt.hash('1234', 12);
   
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@freshmart.com' },
+    where: { email: 'admin@halalmart.com' },
     update: { 
       password: adminPassword, 
       role: 'SUPER_ADMIN' 
     },
     create: {
-      email: 'admin@freshmart.com',
+      email: 'admin@halalmart.com',
       password: adminPassword,
       name: 'System Admin',
       phone: '01900000000', // Dummy phone
@@ -21,7 +21,7 @@ async function main() {
     },
   });
   
-  console.log('✅ Admin user admin@freshmart.com created successfully with password 1234!');
+  console.log('✅ Admin user admin@halalmart.com created successfully with password 1234!');
 }
 
 main()

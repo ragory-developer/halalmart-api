@@ -45,7 +45,7 @@ export class SslCommerzService {
     
     // Required customer info for SSL Commerz
     params.append('cus_name', 'System Admin');
-    params.append('cus_email', 'admin@freshcart.com');
+    params.append('cus_email', 'admin@halalmart.com');
     params.append('cus_add1', 'Dhaka');
     params.append('cus_add2', 'Dhaka');
     params.append('cus_city', 'Dhaka');

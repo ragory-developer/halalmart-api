@@ -1,4 +1,4 @@
-# FreshCart API — Troubleshooting Guide
+# HalalMart API — Troubleshooting Guide
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**
 
@@ -111,13 +111,13 @@ UPDATE user SET role = 'SUPER_ADMIN' WHERE email = 'admin@example.com';
 ### High Memory Usage
 
 - WooCommerce import runs in-process — imports keep 500 log lines per task in memory
-- Restart PM2 after large imports: `pm2 restart freshmart-api`
+- Restart PM2 after large imports: `pm2 restart halalmart-api`
 
 ### Cart Cleanup Not Running
 
 ```bash
 # Verify PM2 logs show "Cart Cleanup Job started"
-pm2 logs freshmart-api | grep "Cart Cleanup"
+pm2 logs halalmart-api | grep "Cart Cleanup"
 ```
 
 If missing, verify `cartCleanupJob.start()` is called in `server.ts` after `app.listen()`.
@@ -130,7 +130,7 @@ If missing, verify `cartCleanupJob.start()` is called in `server.ts` after `app.
 
 ```bash
 # PM2 logs (production)
-pm2 logs freshmart-api
+pm2 logs halalmart-api
 
 # Dev logs appear in terminal (Morgan HTTP logs + custom logger)
 ```

@@ -1,4 +1,4 @@
-# FreshCart API — Commands & Operations Reference
+# HalalMart API — Commands & Operations Reference
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**
 
@@ -54,7 +54,7 @@
 ```bash
 # 1. Clone and install
 git clone <repo>
-cd freshmart-api
+cd halalmart-api
 npm install
 
 # 2. Configure environment

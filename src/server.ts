@@ -55,7 +55,7 @@ const startServer = async () => {
     }
 
     app.listen(config.port, () => {
-      logger.info(`🚀 FreshCart API running on http://localhost:${config.port}`);
+      logger.info(`🚀 HalalMart API running on http://localhost:${config.port}`);
       logger.info(`📋 Health check: http://localhost:${config.port}/api/health`);
       logger.info(`🔥 Dashboard stats mounted: /api/user-dashboard/stats`);
       logger.info(`🌍 Environment: ${config.nodeEnv}`);

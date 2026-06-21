@@ -38,7 +38,7 @@ export const config = {
   },
   orderDeductionAmount: parseFloat(process.env.ORDER_DEDUCTION_AMOUNT || '0'),
   adminAccessKey: process.env.ADMIN_ACCESS_KEY || 'ADMIN',
-  wordpressCipherKey: process.env.CIPHER_KEY || 'freshcart_wp_key_2025',
+  wordpressCipherKey: process.env.CIPHER_KEY || 'halalmart_wp_key_2025',
   woocommerce: {
     siteUrl: process.env.WORDPRESS_URL || '',
     consumerKey: process.env.WC_CONSUMER_KEY || '',

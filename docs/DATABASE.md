@@ -1,4 +1,4 @@
-# FreshCart API — Database Architecture
+# HalalMart API — Database Architecture
 
 > **Last Updated:** 2026-06-11 | **Source:** `prisma/schema.prisma` | **AI-Maintained**
 

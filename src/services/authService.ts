@@ -277,7 +277,7 @@ export class AuthService {
       create: { phone, code, expiresAt, verified: false, attempts, blockedUntil },
     });
 
-    const message = `Your FreshCart verification code is: ${code}`;
+    const message = `Your HalalMart verification code is: ${code}`;
     const smsSuccess = await sendGlobalSms(phone, message, 'OTP');
 
     if (!smsSuccess) {

@@ -1,4 +1,4 @@
-# FreshCart API — Authentication & Security
+# HalalMart API — Authentication & Security
 
 > **Last Updated:** 2026-06-11 | **Source:** `src/services/authService.ts`, `src/middleware/auth.ts` | **AI-Maintained**
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-FreshCart uses **JWT (JSON Web Token)** based authentication with a dual-token strategy (access + refresh tokens). Additionally, it supports **OTP-based phone authentication** for guest and mobile-first checkout flows.
+HalalMart uses **JWT (JSON Web Token)** based authentication with a dual-token strategy (access + refresh tokens). Additionally, it supports **OTP-based phone authentication** for guest and mobile-first checkout flows.
 
 ---
 

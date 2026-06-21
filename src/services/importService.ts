@@ -1,5 +1,5 @@
 /**
- * Core import service — maps WooCommerce data to FreshCart schema and persists it.
+ * Core import service — maps WooCommerce data to HalalMart schema and persists it.
  */
 
 import prisma from '../config/database';

@@ -1,7 +1,7 @@
 {
-  "name": "freshcart-backend",
+  "name": "halalmart-backend",
   "version": "1.0.0",
-  "description": "FreshCart Grocery eCommerce API",
+  "description": "HalalMart Grocery eCommerce API",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

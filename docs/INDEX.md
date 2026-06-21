@@ -1,8 +1,8 @@
-# FreshCart API — Documentation Index
+# HalalMart API — Documentation Index
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained Living Documentation**
 
-This is the root index for the FreshCart API documentation knowledge base.
+This is the root index for the HalalMart API documentation knowledge base.
 
 ---
 

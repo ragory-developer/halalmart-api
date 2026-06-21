@@ -1,4 +1,4 @@
-# FreshCart API — Codebase Improvement Roadmap
+# HalalMart API — Codebase Improvement Roadmap
 
 > **Last Updated:** 2026-06-11 | **AI-Maintained**  
 > **Scope:** Code quality, maintainability, performance, architecture — NO behavior changes  
