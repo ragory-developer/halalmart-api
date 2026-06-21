@@ -1,12 +1,12 @@
-# HalalMart API — Project Overview
+# City Halal Market API — Project Overview
 
-> **Last Updated:** 2026-06-11 | **Version:** 1.0.0 | **AI-Maintained**
+> **Last Updated:** 2026-06-21 | **Version:** 1.0.0 | **AI-Maintained**
 
 ---
 
 ## What Is This Project?
 
-**HalalMart** is a full-featured grocery & e-commerce backend API built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM** on a **MySQL** database. It powers an online storefront where customers can browse products, manage carts, place orders, and track deliveries — and where admins can manage the entire catalog, inventory, orders, and even the visual layout of the storefront.
+**City Halal Market** (internal project name: HalalMart) is a full-featured grocery & e-commerce backend API built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM** on a **MySQL** database. It powers an online storefront where customers can browse products, manage carts, place orders, and track deliveries — and where admins can manage the entire catalog, inventory, orders, and even the visual layout of the storefront.
 
 The project name in `package.json` is `halalmart-backend`.
 
