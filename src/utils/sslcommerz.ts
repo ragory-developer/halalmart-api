@@ -80,4 +80,21 @@ export class SslCommerzService {
 
     throw new Error(`SSL Commerz Init Failed: ${data.failedreason || JSON.stringify(data)}`);
   }
+
+  /**
+   * Validates an IPN or Success Callback
+   */
+  public static async validateIPN(val_id: string) {
+    const creds = this.getCredentials();
+    const url = `${this.getBaseUrl()}/validator/api/validationserverAPI.php?val_id=${val_id}&store_id=${creds.store_id}&store_passwd=${creds.store_passwd}&v=1&format=json`;
+
+    const response = await fetch(url);
+    const data: any = await response.json();
+
+    if (data.status === 'VALID' || data.status === 'VALIDATED') {
+      return data;
+    }
+    
+    throw new Error('SSL Validation Failed');
+  }
 }

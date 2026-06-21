@@ -57,15 +57,18 @@ export class WalletController extends BaseController {
 
   /** Handle SSL Gateway Success */
   sslSuccess = asyncHandler(async (req: any, res: Response) => {
-    const { tran_id, status, amount } = req.body;
+    const { tran_id, status, val_id } = req.body;
     const frontendUrl = config.frontendUrl;
     const redirectTarget = `${frontendUrl}/admin/settings`; 
 
-    if (status !== 'VALID' && status !== 'VALIDATED') {
+    if (!val_id || (status !== 'VALID' && status !== 'VALIDATED')) {
       return res.redirect(`${redirectTarget}?status=failed&message=Payment Failed Validation`);
     }
 
     try {
+      // Validate IPN directly with SSL Commerz to prevent spoofing
+      const validationData = await SslCommerzService.validateIPN(val_id);
+
       const transactionCheck = await prisma.walletTransaction.findUnique({ where: { id: tran_id } });
       if (!transactionCheck || transactionCheck.status === 'COMPLETED') {
          return res.redirect(`${redirectTarget}?status=failed&message=Transaction Already Processed`);
