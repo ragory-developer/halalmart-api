@@ -58,4 +58,16 @@ export class AuthController extends BaseController {
     const result = await authService.completeRegistration(req.body);
     this.handleSuccess(res, result);
   });
+
+  sendEmailOtp = asyncHandler(async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const result = await authService.sendEmailOtp(email);
+    this.handleSuccess(res, result);
+  });
+
+  verifyEmailOtp = asyncHandler(async (req: Request, res: Response) => {
+    const { email, code, name } = req.body;
+    const result = await authService.verifyEmailOtp(email, code, name);
+    this.handleSuccess(res, result);
+  });
 }

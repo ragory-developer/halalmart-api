@@ -398,6 +398,136 @@ export class AuthService {
     };
   }
 
+  /** Send OTP to an email address */
+  async sendEmailOtp(email: string) {
+    // Use the OTPVerification table with email as the lookup key
+    const otpKey = `email:${email}`;
+    const existingOtp = await prisma.oTPVerification.findUnique({ where: { phone: otpKey } });
+    
+    if (existingOtp) {
+      if (existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
+        const waitMins = Math.ceil((existingOtp.blockedUntil.getTime() - Date.now()) / (60 * 1000));
+        throw new TooManyRequestsError(`Too many requests. Please try again after ${waitMins} minutes.`);
+      }
+      
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      if ((existingOtp.blockedUntil && existingOtp.blockedUntil <= new Date()) || existingOtp.updatedAt < oneHourAgo) {
+        await prisma.oTPVerification.update({
+          where: { phone: otpKey },
+          data: { attempts: 0, blockedUntil: null }
+        });
+        existingOtp.attempts = 0;
+      }
+    }
+
+    // Check if user exists by email
+    const user = await prisma.user.findFirst({ where: { email } });
+    const exists = !!user;
+    const isRegistered = !!(user && !user.isGuest);
+
+    const attempts = (existingOtp?.attempts || 0) + 1;
+    let blockedUntil: Date | null = null;
+    
+    const MAX_ATTEMPTS = 3;
+    const BLOCK_DURATION = 10 * 60 * 1000;
+
+    if (attempts >= MAX_ATTEMPTS) {
+      blockedUntil = new Date(Date.now() + BLOCK_DURATION);
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await prisma.oTPVerification.upsert({
+      where: { phone: otpKey },
+      update: { code, expiresAt, verified: false, attempts, blockedUntil },
+      create: { phone: otpKey, code, expiresAt, verified: false, attempts, blockedUntil },
+    });
+
+    // Log the OTP in development (in production, integrate an email transporter)
+    const isDev = config.nodeEnv?.trim() === 'development' || !config.nodeEnv;
+    if (isDev) {
+      console.log(`\n\n\n=== MOCK EMAIL OTP (DEVELOPMENT MODE) ===\nTO: ${email}\nCODE: ${code}\n====================\n\n\n`);
+    } else {
+      // Production: send via email transporter (nodemailer, etc.)
+      console.log(`[EMAIL OTP] Code ${code} generated for ${email}. Integrate email transporter for production.`);
+    }
+
+    return { exists, isRegistered };
+  }
+
+  /** Verify email OTP and login/register the user */
+  async verifyEmailOtp(email: string, code: string, name?: string) {
+    const otpKey = `email:${email}`;
+    const otpRec = await prisma.oTPVerification.findUnique({ where: { phone: otpKey } });
+    
+    if (!otpRec) {
+      throw new UnauthorizedError('No OTP request found for this email');
+    }
+
+    if (otpRec.blockedUntil && otpRec.blockedUntil > new Date()) {
+      const waitMins = Math.ceil((otpRec.blockedUntil.getTime() - Date.now()) / (60 * 1000));
+      throw new TooManyRequestsError(`Too many failed attempts. Please try again after ${waitMins} minutes.`);
+    }
+
+    if (otpRec.code !== code || otpRec.expiresAt < new Date()) {
+      const attempts = (otpRec.attempts || 0) + 1;
+      let blockedUntil = null;
+      if (attempts >= 5) {
+        blockedUntil = new Date(Date.now() + 15 * 60 * 1000);
+      }
+      await prisma.oTPVerification.update({
+        where: { phone: otpKey },
+        data: { attempts, blockedUntil },
+      });
+      throw new UnauthorizedError('Invalid or expired OTP');
+    }
+
+    await prisma.oTPVerification.update({
+      where: { phone: otpKey },
+      data: { verified: true, attempts: 0, blockedUntil: null },
+    });
+
+    // Find if user already exists by email
+    let user = await prisma.user.findFirst({ where: { email } });
+    if (!user) {
+      const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10).toUpperCase();
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      
+      user = await prisma.user.create({
+        data: {
+          name: name?.trim() || 'Guest User',
+          email,
+          password: hashedPassword,
+          isGuest: true,
+          role: 'USER',
+        },
+      });
+      await prisma.cart.create({ data: { userId: user.id } });
+    } else if (name?.trim() && user.isGuest && user.name === 'Guest User') {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { name: name.trim() },
+      });
+    }
+
+    const tokens = this.generateTokens(user.id, user.role);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        phone: user.phone,
+        isGuest: user.isGuest,
+        permissions: user.permissions ? JSON.parse(user.permissions) : [],
+      },
+      ...tokens,
+    };
+  }
+
   /** Generate JWT access + refresh tokens */
   private generateTokens(userId: string, role: string) {
     const accessToken = jwt.sign({ userId, role }, config.jwt.accessSecret as any, {

@@ -43,3 +43,13 @@ export const verifyOtpSchema = z.object({
   phone: z.string().min(10, 'Valid phone number is required'),
   code: z.string().min(4, 'OTP code is required'),
 });
+
+export const sendEmailOtpSchema = z.object({
+  email: z.string().email('Valid email address is required'),
+});
+
+export const verifyEmailOtpSchema = z.object({
+  email: z.string().email('Valid email address is required'),
+  code: z.string().min(4, 'OTP code is required'),
+  name: z.string().optional(),
+});

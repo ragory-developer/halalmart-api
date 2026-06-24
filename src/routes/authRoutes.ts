@@ -9,8 +9,10 @@ import {
   loginWithPhoneSchema,
   refreshSchema,
   registerSchema,
+  sendEmailOtpSchema,
   sendOtpSchema,
   setupSuperAdminSchema,
+  verifyEmailOtpSchema,
   verifyOtpSchema
 } from '../validators/auth.schema';
 
@@ -239,5 +241,8 @@ router.post('/verify-otp', authLimiter, validate(verifyOtpSchema), authControlle
  *         description: Registration completed
  */
 router.post('/complete-registration', validate(completeRegistrationSchema), authController.completeRegistration);
+
+router.post('/send-email-otp', authLimiter, validate(sendEmailOtpSchema), authController.sendEmailOtp);
+router.post('/verify-email-otp', authLimiter, validate(verifyEmailOtpSchema), authController.verifyEmailOtp);
 
 export default router;

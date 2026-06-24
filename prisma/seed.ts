@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import fs from 'fs';
 import path from 'path';
+import { generateProductsFromData } from './faker/dataImporter';
+import { generateUsers, generateAddresses, generateReviews, generateOrders } from './faker/generators';
 
 const prisma = new PrismaClient();
 
@@ -104,111 +106,101 @@ async function main() {
     },
   });
 
+  // --- Fetch CSV Data & Generate Faker Products ---
+  console.log('📦 Reading CSV data and generating Faker products...');
+  const { categories, brands, products } = await generateProductsFromData();
+  console.log(`📊 Found ${products.length} unique products, ${brands.length} brands, and ${categories.length} categories.`);
+
   // --- Seed Brands ---
-  console.log('🏷️ Seeding brands...');
-  const brandPran = await prisma.brand.create({ data: { name: 'Pran', slug: 'pran' } });
-  const brandMDH = await prisma.brand.create({ data: { name: 'MDH', slug: 'mdh' } });
-  const brandShan = await prisma.brand.create({ data: { name: 'Shan', slug: 'shan' } });
-  const brandTilda = await prisma.brand.create({ data: { name: 'Tilda', slug: 'tilda' } });
-  const brandHaldirams = await prisma.brand.create({ data: { name: "Haldiram's", slug: 'haldirams' } });
-  const brandAmul = await prisma.brand.create({ data: { name: 'Amul', slug: 'amul' } });
+  console.log('🏷️ Seeding realistic brands...');
+  const createdBrands: Record<string, string> = {};
+  for (const b of brands) {
+    const brand = await prisma.brand.create({ data: { name: b.name, slug: b.slug } });
+    createdBrands[b.slug] = brand.id;
+  }
 
   // --- Seed Categories ---
-  console.log('🗂️ Seeding categories...');
-  const categories = [
-    { name: 'Halal Meat', slug: 'halal-meat' },
-    { name: 'Fresh Produce', slug: 'fresh-produce' },
-    { name: 'Rice', slug: 'rice' },
-    { name: 'Flour & Bread', slug: 'flour-bread' },
-    { name: 'Lentils & Dal', slug: 'lentils-dal' },
-    { name: 'Spices', slug: 'spices' },
-    { name: 'Frozen Foods', slug: 'frozen-foods' },
-    { name: 'Dairy & Eggs', slug: 'dairy-eggs' },
-    { name: 'Drinks', slug: 'drinks' },
-    { name: 'Snacks & Sweets', slug: 'snacks-sweets' },
-    { name: 'Bangladeshi', slug: 'bangladeshi' },
-    { name: 'Indian', slug: 'indian' },
-    { name: 'Pakistani', slug: 'pakistani' },
-    { name: 'Middle Eastern', slug: 'middle-eastern' },
-    { name: 'Household', slug: 'household' },
-    { name: 'Catering / Bulk', slug: 'catering-bulk' },
-  ];
+  console.log('🗂️ Seeding realistic categories...');
+  const createdCats: Record<string, string> = {};
   
-  const createdCats: any = {};
-  for (const cat of categories) {
-    createdCats[cat.slug] = await prisma.category.create({ data: cat });
+  // First pass: parent categories
+  for (const cat of categories.filter((c: any) => !c.parent)) {
+    const created = await prisma.category.create({ data: { name: cat.name, slug: cat.slug } });
+    createdCats[cat.slug] = created.id;
+  }
+  
+  // Second pass: child categories
+  for (const cat of categories.filter((c: any) => c.parent)) {
+    if (createdCats[cat.parent]) {
+      const created = await prisma.category.create({ 
+        data: { name: cat.name, slug: cat.slug, parentId: createdCats[cat.parent] } 
+      });
+      createdCats[cat.slug] = created.id;
+    }
   }
 
   // --- Seed Products & Variants ---
-  console.log('🛍️ Seeding products from S3 mapped images...');
-
-  // 1. Pre-defined manual products for specific UI elements
-  // We keep the old ones for specific components, or we can just use dynamic ones.
-  // We'll keep the chicken and dates for specific showcase references
-  const prodChicken = await prisma.product.create({
-    data: {
-      name: 'Fresh Halal Whole Chicken',
-      slug: 'fresh-halal-whole-chicken',
-      description: 'Hand-slaughtered, Zabiha certified fresh whole chicken. Cut to your preference.',
-      shortDescription: 'Fresh Zabiha Halal Chicken',
-      price: 12.99,
-      stock: 50,
-      image: '/assets/01.Coming soon 10_x3_-1.png', // Fallback, will be overwritten if available
-      images: '["/assets/01.Coming soon 10_x3_-1.png"]',
-      unit: 'bird',
-      isHalal: true,
-      featured: true,
-      categories: { connect: [{ id: createdCats['halal-meat'].id }] },
-      variants: {
-        create: [
-          { sku: 'CHK-WH', price: 12.99, stock: 20, isDefault: true, attributes: { create: [{ name: 'Cut', value: 'Whole' }] } },
-          { sku: 'CHK-8PC', price: 13.99, stock: 30, isDefault: false, attributes: { create: [{ name: 'Cut', value: 'Cut in 8 Pieces' }] } }
-        ]
+  console.log('🛍️ Seeding realistic products...');
+  for (const p of products) {
+    await prisma.product.create({
+      data: {
+        name: p.name,
+        slug: p.slug,
+        description: p.description,
+        shortDescription: p.shortDescription,
+        price: p.price,
+        stock: p.stock,
+        image: p.image,
+        images: p.images,
+        unit: p.unit,
+        isHalal: p.isHalal,
+        featured: p.featured,
+        brandId: p.brandSlug ? createdBrands[p.brandSlug] : undefined,
+        categories: p.categorySlug && createdCats[p.categorySlug] 
+          ? { connect: [{ id: createdCats[p.categorySlug] }] } 
+          : undefined,
       }
-    },
-    include: { variants: true }
-  });
+    });
+  }
+  console.log(`✅ Seeded ${products.length} products.`);
 
-  const mapFilePath = path.resolve(__dirname, 's3_image_map.json');
-  if (fs.existsSync(mapFilePath)) {
-    const s3Images = JSON.parse(fs.readFileSync(mapFilePath, 'utf8'));
-    console.log(`Found ${s3Images.length} images mapped from S3.`);
-    
-    // Ensure all categories from map exist
-    const uniqueCategories = [...new Set(s3Images.map((img: any) => img.categorySlug))];
-    for (const catSlug of uniqueCategories as string[]) {
-      if (!createdCats[catSlug]) {
-        createdCats[catSlug] = await prisma.category.create({
-          data: { name: catSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '), slug: catSlug }
-        });
-      }
-    }
+  // --- Seed Realistic Real-World Data (Users, Reviews, Orders) ---
+  console.log('👥 Generating 30 realistic users...');
+  const fakeUsers = generateUsers(30);
+  const createdUserIds: string[] = [];
+  for (const u of fakeUsers) {
+    const user = await prisma.user.create({ data: { ...u, password: hashedPassword } });
+    createdUserIds.push(user.id);
+  }
 
-    let i = 0;
-    for (const img of s3Images) {
-      i++;
-      const price = Math.floor(Math.random() * 20) + 1.99; // Random price between 1.99 and 21.99
-      const stock = Math.floor(Math.random() * 100) + 10;
-      
-      const p = await prisma.product.create({
-        data: {
-          name: img.name,
-          slug: img.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + i,
-          description: `Premium quality ${img.name} available at City Halal Market.`,
-          shortDescription: img.name,
-          price: price,
-          stock: stock,
-          image: img.s3Url,
-          images: JSON.stringify([img.s3Url]),
-          unit: 'pcs',
-          featured: i % 5 === 0, // feature every 5th product
-          categories: { connect: [{ id: createdCats[img.categorySlug].id }] },
-        }
-      });
-    }
-    console.log('✅ Dynamic S3 products seeded.');
-  } else {
-    console.warn('⚠️ s3_image_map.json not found, skipping dynamic S3 products seeding.');
+  console.log('🏠 Generating addresses for users...');
+  const fakeAddresses = generateAddresses(createdUserIds, stateFlorida.id, cityMiami.id, areaMiamiGardens.id);
+  const createdAddressIds: string[] = [];
+  for (const addr of fakeAddresses) {
+    const address = await prisma.userAddress.create({ data: addr });
+    createdAddressIds.push(address.id);
+  }
+
+  const allProductIds = (await prisma.product.findMany({ select: { id: true } })).map((p: any) => p.id);
+
+  console.log('⭐ Generating 100 realistic product reviews...');
+  const fakeReviews = generateReviews(allProductIds, [customer.id, ...createdUserIds], 100);
+  for (const rev of fakeReviews) {
+    await prisma.review.create({ data: rev });
+  }
+
+  console.log('📦 Generating 50 realistic past orders...');
+  const fakeOrders = generateOrders(createdUserIds, allProductIds, createdAddressIds, 50);
+  for (const order of fakeOrders) {
+    const { items, ...orderData } = order;
+    await prisma.order.create({
+      data: {
+        ...orderData,
+        items: {
+          create: items,
+        },
+      },
+    });
   }
 
   // --- Seed Global Store Settings ---
@@ -229,6 +221,7 @@ async function main() {
     { key: 'productCardShowRating', value: 'true' },
     { key: 'productCardShowAddToCart', value: 'true' },
     { key: 'productCardBadgeStyle', value: 'pill' },
+    { key: 'checkout_verification_method', value: 'phone' },
   ];
 
   for (const setting of settingsData) {
@@ -281,6 +274,10 @@ async function main() {
     { name: 'SpecialOffersBanner', label: 'Special Offers', category: 'Marketing' },
     { name: 'CategoryShowcase', label: 'Category Grid', category: 'Commerce' },
     { name: 'BrandShowcase', label: 'Brand Grid', category: 'Commerce' },
+    { name: 'BentoBannerGrid', label: 'Bento Banner Grid', category: 'Hero' },
+    { name: 'ThreeProductBanner', label: 'Three Product Banner', category: 'Marketing' },
+    { name: 'FaqSection', label: 'FAQ Section', category: 'Content' },
+    { name: 'NewsletterBanner', label: 'Newsletter Banner', category: 'Marketing' },
   ];
 
   for (const comp of defaultComponents) {
@@ -367,12 +364,6 @@ async function main() {
       }
     },
     {
-      id: "special_offers_home",
-      type: "SpecialOffersBanner",
-      variant: "default",
-      props: {}
-    },
-    {
       id: "why_us_home",
       type: "WhyUsSection",
       variant: "default",
@@ -388,6 +379,30 @@ async function main() {
         subtitle: "Shop from top quality brands.",
         textAlign: "center"
       }
+    },
+    {
+      id: "three_product_banner_home",
+      type: "ThreeProductBanner",
+      variant: "default",
+      props: {}
+    },
+    {
+      id: "bento_banner_grid_home",
+      type: "BentoBannerGrid",
+      variant: "default",
+      props: {}
+    },
+    {
+      id: "faq_section_home",
+      type: "FaqSection",
+      variant: "default",
+      props: {}
+    },
+    {
+      id: "newsletter_banner_home",
+      type: "NewsletterBanner",
+      variant: "default",
+      props: {}
     }
   ];
   await seedBuilderPage('home', '/', 'Home', homeSections);
