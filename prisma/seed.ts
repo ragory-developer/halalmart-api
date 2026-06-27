@@ -115,7 +115,7 @@ async function main() {
   console.log('🏷️ Seeding realistic brands...');
   const createdBrands: Record<string, string> = {};
   for (const b of brands) {
-    const brand = await prisma.brand.create({ data: { name: b.name, slug: b.slug } });
+    const brand = await prisma.brand.create({ data: { name: b.name, slug: b.slug, logo: b.logo || `https://placehold.co/400x200/EEE/31343C?font=montserrat&text=${encodeURIComponent(b.name)}` } });
     createdBrands[b.slug] = brand.id;
   }
 
