@@ -78,6 +78,19 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
+// Global unhandled error handlers for production reliability
+process.on('uncaughtException', (err) => {
+  logger.error('UNCAUGHT EXCEPTION! Shutting down...', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason: any, promise) => {
+  logger.error('UNHANDLED REJECTION! 💥', { reason, promise });
+  // Avoid immediate process.exit(1) on unhandledRejection to allow logger to flush, or exit gracefully.
+  // We can let the uncaughtException handle catastrophic failures.
+});
+
+
 startServer();
 
 // Trigger restart 4
