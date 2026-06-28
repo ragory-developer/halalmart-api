@@ -141,6 +141,49 @@ router.post('/pages/:key/apply-template', authenticate, authorize('ADMIN', 'SUPE
 
 /**
  * @swagger
+ * /api/builder/pages:
+ *   get:
+ *     summary: Get all pages
+ *     tags: [Builder]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of pages
+ *   post:
+ *     summary: Create new page
+ *     tags: [Builder]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       201:
+ *         description: Page created
+ */
+router.get('/pages', authenticate, authorize('ADMIN', 'SUPER_ADMIN'), controller.getPages);
+router.post('/pages', authenticate, authorize('ADMIN', 'SUPER_ADMIN'), controller.createPage);
+
+/**
+ * @swagger
+ * /api/builder/pages/{key}:
+ *   delete:
+ *     summary: Delete a page
+ *     tags: [Builder]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: key
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Page deleted
+ */
+router.delete('/pages/:key', authenticate, authorize('ADMIN', 'SUPER_ADMIN'), controller.deletePage);
+
+/**
+ * @swagger
  * /api/builder/pages/{key}:
  *   get:
  *     summary: Get admin page by key

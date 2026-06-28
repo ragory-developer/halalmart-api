@@ -130,3 +130,36 @@ export function createDefaultHomeDocument(): BuilderDocument {
   };
 }
 
+export function createDefaultLandingDocument(key: string, slug: string, title: string): BuilderDocument {
+  return {
+    schemaVersion: 1,
+    page: { key, slug, title },
+    sections: [
+      {
+        id: `hero_${key}`,
+        type: "HeroBanner",
+        variant: "default",
+        props: {
+          title: `Welcome to ${title}`,
+          subtitle: "Explore our exclusive offers and products designed just for you.",
+          ctaText: "Shop Now",
+          ctaHref: "/products",
+          imageSrc: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80",
+          textAlign: "center",
+        },
+      },
+      {
+        id: `products_${key}`,
+        type: "ProductShowcase",
+        variant: "default",
+        props: {
+          title: "Featured Products",
+          subtitle: "Discover our top picks for this campaign",
+          showcaseCategoryId: "all",
+          textAlign: "center",
+        },
+      },
+    ],
+  };
+}
+

@@ -4,7 +4,7 @@ import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 import { BadRequestError, NotFoundError } from '../utils/errors';
 import { asyncHandler } from '../utils/helpers';
-import { BuilderDocument, createDefaultHomeDocument, validateBuilderDocument } from '../validators/builder.schema';
+import { BuilderDocument, createDefaultHomeDocument, createDefaultLandingDocument, validateBuilderDocument } from '../validators/builder.schema';
 import { BaseController } from './BaseController';
 
 function getParam(value: string | string[] | undefined, name: string) {
@@ -126,7 +126,7 @@ export class BuilderController extends BaseController {
             publishedVersionId: version.id,
           },
         });
-      });
+      }, { maxWait: 10000, timeout: 30000 });
     } catch (error: any) {
       if (error.code === 'P2002') {
         // Wait 150ms to allow the concurrent transaction to commit
@@ -181,7 +181,7 @@ export class BuilderController extends BaseController {
             publishedVersionId: version.id,
           },
         });
-      });
+      }, { maxWait: 10000, timeout: 30000 });
     } catch (error: any) {
       if (error.code === 'P2002') {
         // Wait 150ms to allow the concurrent transaction to commit
@@ -276,7 +276,7 @@ export class BuilderController extends BaseController {
           });
 
           return { page: updatedPage, draft };
-        });
+        }, { maxWait: 10000, timeout: 30000 });
         break; // Success!
       } catch (error: any) {
         if (error.code === 'P2002' && retries < maxRetries - 1) {
@@ -339,7 +339,7 @@ export class BuilderController extends BaseController {
       });
 
       return { page: updatedPage, published };
-    });
+    }, { maxWait: 10000, timeout: 30000 });
 
     res.json({ success: true, data: result, message: 'Page published' });
   });
@@ -604,5 +604,87 @@ export class BuilderController extends BaseController {
     });
 
     res.status(201).json({ success: true, data: component, message: 'Component registered' });
+  });
+
+  getPages = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const pages = await prisma.builderPage.findMany({
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        versions: {
+          select: { id: true, version: true, status: true, publishedAt: true },
+          orderBy: { version: 'desc' },
+          take: 1
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      data: pages
+    });
+  });
+
+  createPage = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { title, key, slug } = req.body;
+    if (!title || !key || !slug) {
+      throw new BadRequestError('Title, key, and slug are required');
+    }
+
+    const existing = await prisma.builderPage.findUnique({ where: { key } });
+    if (existing) {
+      throw new BadRequestError('A page with this key already exists');
+    }
+
+    const document = createDefaultLandingDocument(key, slug, title);
+
+    const result = await prisma.$transaction(async (tx) => {
+      const page = await tx.builderPage.create({
+        data: {
+          key,
+          slug,
+          title,
+          type: 'builder',
+          status: 'draft',
+        },
+      });
+
+      const draft = await tx.builderPageVersion.create({
+        data: {
+          pageId: page.id,
+          version: 1,
+          status: 'draft',
+          document: toInputJson(document),
+          createdById: req.user?.userId,
+        },
+      });
+
+      const updatedPage = await tx.builderPage.update({
+        where: { id: page.id },
+        data: {
+          draftVersionId: draft.id,
+        },
+      });
+
+      return { page: updatedPage, draft };
+    });
+
+    res.status(201).json({ success: true, data: result, message: 'Page created' });
+  });
+
+  deletePage = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const key = getParam(req.params.key, 'page key');
+    
+    if (key === 'home' || key === 'product_template') {
+      throw new BadRequestError('Cannot delete system pages');
+    }
+
+    const page = await prisma.builderPage.findUnique({ where: { key } });
+    if (!page) {
+      throw new NotFoundError('Page not found');
+    }
+
+    await prisma.builderPage.delete({ where: { key } });
+
+    res.json({ success: true, message: 'Page deleted successfully' });
   });
 }
