@@ -74,6 +74,7 @@ export class MediaController extends BaseController {
             Key: s3Key,
             Body: processed,
             ContentType: 'image/webp',
+            ACL: 'public-read', // Ensure image is publicly readable
           }));
           finalUrl = `https://${S3_BUCKET_NAME}.s3.${region}.amazonaws.com/${s3Key}`;
         } catch (s3Error: any) {
