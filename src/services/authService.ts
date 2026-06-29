@@ -4,6 +4,7 @@ import { config } from '../config';
 import prisma from '../config/database';
 import { ConflictError, ForbiddenError, TooManyRequestsError, UnauthorizedError } from '../utils/errors';
 import { sendGlobalSms } from '../utils/sms';
+import { sendEmail } from '../utils/email';
 
 export class AuthService {
   /** Register a new user */
@@ -444,13 +445,35 @@ export class AuthService {
       create: { phone: otpKey, code, expiresAt, verified: false, attempts, blockedUntil },
     });
 
-    // Log the OTP in development (in production, integrate an email transporter)
+    // Send the email
+    const subject = 'Your HalalMart Verification Code';
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
+        <h2 style="color: #10b981; text-align: center;">HalalMart Verification</h2>
+        <p style="font-size: 16px; color: #333;">Hello,</p>
+        <p style="font-size: 16px; color: #333;">Your verification code is:</p>
+        <div style="background-color: #f3f4f6; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
+          <h1 style="margin: 0; font-size: 32px; letter-spacing: 5px; color: #111;">${code}</h1>
+        </div>
+        <p style="font-size: 14px; color: #666;">This code will expire in 5 minutes.</p>
+        <p style="font-size: 14px; color: #666;">If you didn't request this code, you can safely ignore this email.</p>
+      </div>
+    `;
+
+    const emailSuccess = await sendEmail({
+      to: email,
+      subject,
+      html,
+    });
+
+    if (!emailSuccess) {
+      console.warn(`[EMAIL] Failed to send OTP to ${email}`);
+    }
+
+    // Still log in development for easier testing without configuring SMTP
     const isDev = config.nodeEnv?.trim() === 'development' || !config.nodeEnv;
     if (isDev) {
       console.log(`\n\n\n=== MOCK EMAIL OTP (DEVELOPMENT MODE) ===\nTO: ${email}\nCODE: ${code}\n====================\n\n\n`);
-    } else {
-      // Production: send via email transporter (nodemailer, etc.)
-      console.log(`[EMAIL OTP] Code ${code} generated for ${email}. Integrate email transporter for production.`);
     }
 
     return { exists, isRegistered };
