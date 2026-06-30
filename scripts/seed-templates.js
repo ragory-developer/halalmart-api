@@ -5,13 +5,13 @@ async function seed() {
   const templates = [
     {
       key: 'template-alpha-base',
-      name: 'Alpha (Modern)',
+      name: 'Standard Alpha',
       scope: 'page',
       pageType: 'home',
       themeKey: 'template-alpha',
       isSystem: true,
       document: {
-        page: { key: "home", title: "Alpha Home", slug: "/", theme: "template-alpha" },
+        page: { key: "home", title: "Standard Alpha", slug: "/", theme: "template-alpha" },
         sections: [
           {
             id: "hero-alpha-1",
@@ -24,13 +24,13 @@ async function seed() {
     },
     {
       key: 'template-beta-base',
-      name: 'Beta (Classic)',
+      name: 'Standard Beta',
       scope: 'page',
       pageType: 'home',
       themeKey: 'template-beta',
       isSystem: true,
       document: {
-        page: { key: "home", title: "Beta Home", slug: "/", theme: "template-beta" },
+        page: { key: "home", title: "Standard Beta", slug: "/", theme: "template-beta" },
         sections: [
           {
             id: "hero-beta-1",
@@ -43,7 +43,7 @@ async function seed() {
     },
     {
       key: 'template-gamma-base',
-      name: 'Gamma (Minimal)',
+      name: 'Standard Gamma',
       scope: 'page',
       pageType: 'home',
       themeKey: 'template-gamma',
