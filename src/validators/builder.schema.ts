@@ -60,7 +60,7 @@ export const builderSectionSchema = z.object({
 });
 
 export const builderDocumentSchema = z.object({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(1).default(1),
   page: z.object({
     key: z.string().min(1).max(80),
     slug: z.string().min(1).max(191),
