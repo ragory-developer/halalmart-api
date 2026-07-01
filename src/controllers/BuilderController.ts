@@ -196,8 +196,14 @@ export class BuilderController extends BaseController {
     const key = getParam(req.params.key, 'page key');
     await this.ensurePageSeed(key);
 
-    const page = await prisma.builderPage.findUnique({ where: { key } });
-    if (!page) throw new NotFoundError('Builder page not found');
+    let page = await prisma.builderPage.findUnique({ where: { key } });
+    if (!page) {
+      if (['global', 'home', 'product_template'].includes(key)) {
+        page = await this.ensurePage(key);
+      } else {
+        throw new NotFoundError('Builder page not found');
+      }
+    }
 
     const [draft, published] = await Promise.all([
       page.draftVersionId
